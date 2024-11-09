@@ -1,4 +1,4 @@
-namespace codersquare.DAL.Data.Models;
+namespace codersquare.DAL;
 
 public class Like
 {

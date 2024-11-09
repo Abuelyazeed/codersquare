@@ -7,7 +7,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Data\Context\" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Repository\Comment\" />
+      <Folder Include="Repository\Like\" />
+      <Folder Include="Repository\User\" />
     </ItemGroup>
 
 </Project>
