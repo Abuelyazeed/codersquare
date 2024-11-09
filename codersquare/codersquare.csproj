@@ -10,4 +10,9 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\codersquare.BL\codersquare.BL.csproj" />
+      <ProjectReference Include="..\codersquare.DAL\codersquare.DAL.csproj" />
+    </ItemGroup>
+
 </Project>
