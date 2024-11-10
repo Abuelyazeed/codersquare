@@ -15,10 +15,4 @@
       </PackageReference>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Repository\Comment\" />
-      <Folder Include="Repository\Like\" />
-      <Folder Include="Repository\User\" />
-    </ItemGroup>
-
 </Project>

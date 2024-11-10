@@ -23,6 +23,16 @@ builder.Services.AddDbContext<CodersquareContext>(options =>
 
 #endregion
 
+#region Repos
+
+builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<IPostRepo, PostRepo>();
+builder.Services.AddScoped<ILikeRepo, LikeRepo>();
+builder.Services.AddScoped<ICommentRepo, CommentRepo>();
+
+
+#endregion
+
 
 var app = builder.Build();
 
