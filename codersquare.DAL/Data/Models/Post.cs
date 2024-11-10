@@ -2,8 +2,11 @@ namespace codersquare.DAL;
 
 public class Post
 {
+    
     public Guid Id { get; set; }
+    
     public string Title { get; set; }
+    
     public string Url { get; set; }
     public DateTime PostedAt { get; set; }
     public Guid UserId  { get; set; }

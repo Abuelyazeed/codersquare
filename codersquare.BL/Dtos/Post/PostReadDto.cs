@@ -2,7 +2,7 @@ using codersquare.DAL;
 
 namespace codersquare.BL;
 
-public class ReadPostDto
+public class PostReadDto
 {
     public Guid Id { get; set; }
     public string Title { get; set; }

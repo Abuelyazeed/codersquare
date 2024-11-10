@@ -12,11 +12,11 @@ public class PostManager : IPostManager
         _postRepo = postRepo;
     }
 
-    public async Task<List<ReadPostDto>> GetAllPosts()
+    public async Task<List<PostReadDto>> GetAllPosts()
     {
         List<Post> posts = await _postRepo.GetAllPosts();
 
-        List<ReadPostDto> postDtos = posts.Select(post => new ReadPostDto
+        List<PostReadDto> postDtos = posts.Select(post => new PostReadDto
         {
             Id = post.Id,
             Title = post.Title,
@@ -40,13 +40,13 @@ public class PostManager : IPostManager
         return postDtos;
     }
 
-    public async Task CreatePost(CreatePostDto postToCreate, Guid userId)
+    public async Task CreatePost(PostCreateDto toPostCreate, Guid userId)
     {
         Post post = new Post
         {
             Id = Guid.NewGuid(),
-            Title = postToCreate.Title,
-            Url = postToCreate.Url,
+            Title = toPostCreate.Title,
+            Url = toPostCreate.Url,
             PostedAt = DateTime.Now,
             UserId = userId
             
@@ -56,12 +56,12 @@ public class PostManager : IPostManager
         await _postRepo.SaveChanges();
     }
 
-    public async Task<ReadPostDto?> GetPostById(Guid id)
+    public async Task<PostReadDto?> GetPostById(Guid id)
     {
         Post post = await _postRepo.GetPostById(id);
         if (post == null) return null;
 
-        return new ReadPostDto()
+        return new PostReadDto()
         {
             Id = post.Id,
             Title = post.Title,
@@ -85,8 +85,12 @@ public class PostManager : IPostManager
 
     }
 
-    public async void DeletePost(Guid postId)
+    public async Task<bool> DeletePost(Guid postId)
     {
-        throw new NotImplementedException();
+        Post post = await _postRepo.GetPostById(postId);
+        if(post == null) return false;
+        _postRepo.DeletePost(post);
+        await _postRepo.SaveChanges();
+        return true;
     }
 }

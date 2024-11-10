@@ -4,11 +4,11 @@ namespace codersquare.BL;
 
 public interface IPostManager
 {
-    Task<List<ReadPostDto>> GetAllPosts();
+    Task<List<PostReadDto>> GetAllPosts();
     
-    Task CreatePost(CreatePostDto postToCreate, Guid userId);
+    Task CreatePost(PostCreateDto toPostCreate, Guid userId);
     
-    Task<ReadPostDto?> GetPostById(Guid id);
+    Task<PostReadDto?> GetPostById(Guid id);
     
-    void DeletePost(Guid postId);
+    Task<bool> DeletePost(Guid postId);
 }
