@@ -8,6 +8,8 @@ public interface ICommentRepo
     
     Task<List<Comment>> GetComments(Guid postId);
     
+    Task<Comment> GetCommentById(Guid id);
+    
     void DeleteComment(Comment comment);
     
     Task<int> SaveChanges();

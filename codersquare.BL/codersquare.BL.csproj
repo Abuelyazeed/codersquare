@@ -18,10 +18,4 @@
       </PackageReference>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Manager\Comment\" />
-      <Folder Include="Manager\Like\" />
-      <Folder Include="Manager\User\" />
-    </ItemGroup>
-
 </Project>

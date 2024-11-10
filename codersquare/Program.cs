@@ -1,3 +1,4 @@
+using codersquare.BL;
 using codersquare.DAL;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,6 +30,16 @@ builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IPostRepo, PostRepo>();
 builder.Services.AddScoped<ILikeRepo, LikeRepo>();
 builder.Services.AddScoped<ICommentRepo, CommentRepo>();
+
+
+#endregion
+
+#region Managers
+
+builder.Services.AddScoped<IUserManager, UserManager>();
+builder.Services.AddScoped<IPostManager, PostManager>();
+builder.Services.AddScoped<ILikeManager, LikeManager>();
+builder.Services.AddScoped<ICommentManager, CommentManager>();
 
 
 #endregion

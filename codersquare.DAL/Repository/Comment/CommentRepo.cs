@@ -26,6 +26,11 @@ public class CommentRepo : ICommentRepo
         return await _context.Comments.Where(c => c.PostId == postId).ToListAsync();
     }
 
+    public async Task<Comment> GetCommentById(Guid id)
+    {
+        return await _context.Comments.FindAsync(id);
+    }
+
     public void DeleteComment(Comment comment)
     {
         _context.Comments.Remove(comment);
