@@ -9,5 +9,7 @@ public interface IUserRepo
     Task<User> GetUserByEmail(string email);
     
     Task<User> GetUserByUsername(string userName);
+    
+    void UpdateUser(User user);
     Task<int> SaveChanges();
 }

@@ -27,6 +27,20 @@ public class UserManager : IUserManager
         await _userRepo.SaveChanges();
     }
 
+    public async Task<bool> UpdateUser(UserUpdateDto userToUpdate, Guid userId)
+    {
+        User user = await _userRepo.GetUserById(userId);
+        if (user == null) return false;
+        user.FirstName = userToUpdate.FirstName;
+        user.LastName = userToUpdate.LastName;
+        user.Email = userToUpdate.Email;
+        user.Password = userToUpdate.Password;
+        user.Username = userToUpdate.Username;
+        
+        int numberOfAffectedRows = await _userRepo.SaveChanges();
+        return numberOfAffectedRows > 0;
+    }
+
     public async Task<UserReadDto> GetUserById(Guid id)
     {
         User user = await _userRepo.GetUserById(id);
@@ -38,6 +52,7 @@ public class UserManager : IUserManager
             FirstName = user.FirstName,
             LastName = user.LastName,
             Username = user.Username,
+            Email = user.Email,
         };
     }
 
@@ -52,6 +67,7 @@ public class UserManager : IUserManager
             FirstName = user.FirstName,
             LastName = user.LastName,
             Username = user.Username,
+            Email = user.Email,
         };
     }
 
@@ -66,6 +82,7 @@ public class UserManager : IUserManager
             FirstName = user.FirstName,
             LastName = user.LastName,
             Username = user.Username,
+            Email = user.Email,
         };
     }
 }

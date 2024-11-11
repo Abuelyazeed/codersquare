@@ -31,6 +31,11 @@ public class UserRepo : IUserRepo
         return await _context.Users.FirstOrDefaultAsync(u => u.Username == userName);
     }
 
+    public void UpdateUser(User user)
+    {
+        //throw new NotImplementedException();
+    }
+
     public async Task<int> SaveChanges()
     {
         return await _context.SaveChangesAsync();
