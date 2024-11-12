@@ -31,6 +31,8 @@ namespace codersquare.Controllers
         [HttpGet]
         public async Task<ActionResult<List<PostReadDto>>> GetAllPosts()
         {
+            //throw new Exception("Test exception to verify error handling middleware");
+            
             List<PostReadDto> posts = await _postManager.GetAllPosts();
             if (posts == null || posts.Count == 0) return NotFound("No posts found.");
 
