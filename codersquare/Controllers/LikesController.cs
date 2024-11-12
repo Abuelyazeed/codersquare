@@ -16,15 +16,15 @@ namespace codersquare.Controllers
         }
 
         #region LikePost
-        //POST /api/likes/new
-        [HttpPost("new")]
-        public async Task<ActionResult> LikePost(LikeCreateDto likeCreateDto)
+        // POST /api/posts/{postId}/likes
+        [HttpPost]
+        public async Task<ActionResult> LikePost([FromBody] LikeCreateDto likeCreateDto)
         {
             await _likeManager.CreateLike(likeCreateDto);
-            return Ok();
+            return Ok("Like added successfully.");
         }
-
         #endregion
+
         
     }
 }

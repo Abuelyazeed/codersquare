@@ -6,28 +6,29 @@ namespace codersquare.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostController : ControllerBase
+    public class PostsController : ControllerBase
     {
         private readonly IPostManager _postManager;
 
-        public PostController(IPostManager postManager)
+        public PostsController(IPostManager postManager)
         {
             _postManager = postManager;
         }
         
         #region CreatePost
-        //POST /api/post/new/{userId}
-        [HttpPost("new/{userId:id}")]
+        //POST /api/posts
+        [HttpPost("{userId:guid}")]
 
         public async Task<ActionResult> CreatePost(Guid userId,[FromBody] PostCreateDto post)
         {
             await _postManager.CreatePost(post,userId);
             return Ok("Post created successfully.");
         }
+        #endregion
 
         #region GetAllPosts
-        //GET /api/post/list
-        [HttpGet("list")]
+        //GET /api/posts
+        [HttpGet]
         public async Task<ActionResult<List<PostReadDto>>> GetAllPosts()
         {
             List<PostReadDto> posts = await _postManager.GetAllPosts();
@@ -36,9 +37,10 @@ namespace codersquare.Controllers
             return Ok(posts);
         }
         #endregion
+
+        #region GetPostById
         //GET /api/post/{id}
         [HttpGet("{id:guid}")]
-
         public async Task<ActionResult<PostReadDto>> GetPostById(Guid id)
         {
             PostReadDto post = await _postManager.GetPostById(id);
