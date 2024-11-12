@@ -40,15 +40,15 @@ public class PostManager : IPostManager
         return postDtos;
     }
 
-    public async Task CreatePost(PostCreateDto toPostCreate, Guid userId)
+    public async Task CreatePost(PostCreateDto postToCreate)
     {
         Post post = new Post
         {
             Id = Guid.NewGuid(),
-            Title = toPostCreate.Title,
-            Url = toPostCreate.Url,
+            Title = postToCreate.Title,
+            Url = postToCreate.Url,
             PostedAt = DateTime.Now,
-            UserId = userId
+            UserId = postToCreate.UserId,
             
         };
         

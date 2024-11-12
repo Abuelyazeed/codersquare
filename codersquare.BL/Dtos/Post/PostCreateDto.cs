@@ -11,4 +11,7 @@ public class PostCreateDto
     [Required(ErrorMessage = "URL is required.")]
     [Url(ErrorMessage = "Invalid URL format.")]
     public string Url { get; set; }
+    
+    [Required]
+    public Guid UserId  { get; set; }
 }

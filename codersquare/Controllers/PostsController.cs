@@ -17,11 +17,11 @@ namespace codersquare.Controllers
         
         #region CreatePost
         //POST /api/posts
-        [HttpPost("{userId:guid}")]
+        [HttpPost]
 
-        public async Task<ActionResult> CreatePost(Guid userId,[FromBody] PostCreateDto post)
+        public async Task<ActionResult> CreatePost([FromBody] PostCreateDto post)
         {
-            await _postManager.CreatePost(post,userId);
+            await _postManager.CreatePost(post);
             return Ok("Post created successfully.");
         }
         #endregion
