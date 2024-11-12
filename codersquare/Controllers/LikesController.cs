@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace codersquare.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/likes")]
     [ApiController]
     public class LikesController : ControllerBase
     {
@@ -16,7 +16,8 @@ namespace codersquare.Controllers
         }
 
         #region LikePost
-        // POST /api/posts/{postId}/likes
+        //TODO get post id from url
+        // POST /api//likes/{postId}
         [HttpPost]
         public async Task<ActionResult> LikePost([FromBody] LikeCreateDto likeCreateDto)
         {
@@ -24,6 +25,10 @@ namespace codersquare.Controllers
             return Ok("Like added successfully.");
         }
         #endregion
+        
+        //Todo
+        //List Likes GET /api/likes/{postId}
+        //Delete Likes DELETE /api/likes/{postId}
 
         
     }

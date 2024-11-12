@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace codersquare.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -17,7 +17,7 @@ namespace codersquare.Controllers
         }
 
         #region SignUp
-        //POST /api/user/signup
+        //POST /api/signup
         [HttpPost("signup")]
         public async Task<ActionResult> SignUp([FromBody] UserCreateDto user)
         {
@@ -55,8 +55,9 @@ namespace codersquare.Controllers
         #endregion
         
         #region UpdateUser
-        //GET /api/user/{id}
-        [HttpPut("{id:guid}")]
+        //GET /api/users/{id}
+        //Todo get current user
+        [HttpPatch("users/{id:guid}")]
         public async Task<ActionResult> UpdateUser(UserUpdateDto user, Guid id)
         {
             bool isSuccess = await _userManager.UpdateUser(user, id);
@@ -65,5 +66,10 @@ namespace codersquare.Controllers
         }
 
         #endregion
+        
+        //TODO
+        //Get user GET /api/users/{id}
+        //Get current user GET /api/users/
+        
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace codersquare.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/comments")]
     [ApiController]
     public class CommentsController : ControllerBase
     {
@@ -16,6 +16,7 @@ namespace codersquare.Controllers
         }
         
         #region CreateComment
+        //TODO get current user
         // POST /api/comments/{userId}/{postId}
         [HttpPost("{userId:guid}/{postId:guid}")]
         public async Task<ActionResult> CreateComment(Guid userId, Guid postId, [FromBody] CommentCreateDto commentDto)
@@ -48,5 +49,8 @@ namespace codersquare.Controllers
             return Ok("Comment deleted successfully.");
         }
         #endregion
+        
+        //TODO 
+        //count comments GET /api/comments/{postId}/count
     }
 }

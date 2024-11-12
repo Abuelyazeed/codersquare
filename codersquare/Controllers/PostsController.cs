@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace codersquare.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/posts")]
     [ApiController]
     public class PostsController : ControllerBase
     {
@@ -18,7 +18,6 @@ namespace codersquare.Controllers
         #region CreatePost
         //POST /api/posts
         [HttpPost]
-
         public async Task<ActionResult> CreatePost([FromBody] PostCreateDto post)
         {
             await _postManager.CreatePost(post);
@@ -41,7 +40,7 @@ namespace codersquare.Controllers
         #endregion
 
         #region GetPostById
-        //GET /api/post/{id}
+        //GET /api/posts/{id}
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<PostReadDto>> GetPostById(Guid id)
         {
@@ -54,7 +53,7 @@ namespace codersquare.Controllers
         #endregion
 
         #region DeletePost
-        //DELETE /api/post/{id}
+        //DELETE /api/posts/{id}
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult<bool>> DeletePost(Guid id)
         {
