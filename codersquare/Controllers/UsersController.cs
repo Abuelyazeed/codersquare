@@ -16,9 +16,9 @@ namespace codersquare.Controllers
             _userManager = userManager;
         }
 
-        #region CreateUser
-        //POST /api/user
-        [HttpPost]
+        #region SignUp
+        //POST /api/user/signup
+        [HttpPost("signup")]
         public async Task<ActionResult> SignUp([FromBody] UserCreateDto user)
         {
             try
@@ -35,44 +35,21 @@ namespace codersquare.Controllers
 
         #endregion
 
-        #region GetUserByUsername
-        //GET /api/user/username/ahmed715
-        [HttpGet("username/{username}")]
-        public async Task<ActionResult<UserReadDto>> GetUserByUsername(string username)
+        #region SignIn
+        //POST /api/user/signin
+        [HttpPost("signin")]
+        public async Task<ActionResult> Sign([FromBody] UserSignInDto userSignInDto)
         {
-            UserReadDto user = await _userManager.GetUserByUsername(username);
-           
-            return Ok(user);
-        }
-
-        #endregion
-        
-        #region GetUserById
-        //GET /api/user/id/{id}
-        [HttpGet("id/{id:guid}")]
-        public async Task<ActionResult<UserReadDto>> GetUserById(Guid id)
-        {
-            UserReadDto user = await _userManager.GetUserById(id);
-            if (user == null)
+            try
             {
-                return NotFound($"User not found.");
+                await _userManager.SignIn(userSignInDto); 
+                return Ok("Signed in successfully.");
             }
-            return Ok(user);
-        }
-
-        #endregion
-        
-        #region GetUserByEmail
-        //GET /api/user/email/ahmed@mail.com
-        [HttpGet("email/{email}")]
-        public async Task<ActionResult<UserReadDto>> GetUserByEmail(string email)
-        {
-            UserReadDto user = await _userManager.GetUserByEmail(email);
-            if (user == null)
+            catch (Exception ex)
             {
-                return NotFound($"User with email '{email}' not found.");
+                // Return a 403 Forbidden response for this error
+                return StatusCode(403, new { message = ex.Message });
             }
-            return Ok(user);
         }
 
         #endregion

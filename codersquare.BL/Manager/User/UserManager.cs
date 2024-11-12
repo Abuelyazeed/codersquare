@@ -35,6 +35,28 @@ public class UserManager : IUserManager
         await _userRepo.SaveChanges();
     }
 
+    public async Task<UserReadDto> SignIn(UserSignInDto userToSignIn)
+    {
+        // Try to find the user by username or email
+        var user = await _userRepo.GetUserByUsername(userToSignIn.EmailOrUsername) 
+                   ?? await _userRepo.GetUserByEmail(userToSignIn.EmailOrUsername);
+
+        // If user is still null, invalid credentials
+        if (user == null || user.Password != userToSignIn.Password)
+        {
+            throw new Exception("Invalid username/email or password.");
+        }
+        
+        return new UserReadDto
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Username = user.Username,
+            Email = user.Email,
+        };
+    }
+
     public async Task<bool> UpdateUser(UserUpdateDto userToUpdate, Guid userId)
     {
         User user = await _userRepo.GetUserById(userId);

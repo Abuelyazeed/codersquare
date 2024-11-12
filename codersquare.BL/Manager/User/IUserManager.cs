@@ -3,6 +3,7 @@ namespace codersquare.BL;
 public interface IUserManager
 {
     Task SignUp(UserCreateDto userToCreate);
+    Task<UserReadDto> SignIn(UserSignInDto userToSignIn);
     
     Task<bool> UpdateUser(UserUpdateDto userToUpdate, Guid userId);
     

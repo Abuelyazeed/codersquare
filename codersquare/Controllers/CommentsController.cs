@@ -16,8 +16,8 @@ namespace codersquare.Controllers
         }
         
         #region CreateComment
-        // POST /api/comments/new/{userId}/{postId}
-        [HttpPost("new/{userId:guid}/{postId:guid}")]
+        // POST /api/comments/{userId}/{postId}
+        [HttpPost("{userId:guid}/{postId:guid}")]
         public async Task<ActionResult> CreateComment(Guid userId, Guid postId, [FromBody] CommentCreateDto commentDto)
         {
             await _commentManager.CreateComment(commentDto, userId, postId);
