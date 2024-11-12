@@ -49,10 +49,9 @@ public class CommentManager : ICommentManager
     public async void DeleteComment(Guid id)
     {
         Comment comment = await _commentRepo.GetCommentById(id);
-        if (comment != null)
-        {
-            _commentRepo.DeleteComment(comment);
-            await _commentRepo.SaveChanges();
-        }
+        
+        _commentRepo.DeleteComment(comment);
+        await _commentRepo.SaveChanges();
+        
     }
 }

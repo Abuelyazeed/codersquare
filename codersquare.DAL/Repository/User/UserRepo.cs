@@ -11,7 +11,7 @@ public class UserRepo : IUserRepo
         _context = context;
     }
     
-    public async Task CreateUser(User user)
+    public async Task SignUp(User user)
     {
         await _context.Users.AddAsync(user);
     }

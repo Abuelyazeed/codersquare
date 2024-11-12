@@ -19,10 +19,18 @@ namespace codersquare.Controllers
         #region CreateUser
         //POST /api/user
         [HttpPost]
-        public async Task<ActionResult> CreateUser([FromBody] UserCreateDto user)
+        public async Task<ActionResult> SignUp([FromBody] UserCreateDto user)
         {
-            await _userManager.CreateUser(user);
-            return Ok("User created successfully");
+            try
+            {
+                await _userManager.SignUp(user); 
+                return Ok("User created successfully.");
+            }
+            catch (Exception ex)
+            {
+                // Return a 403 Forbidden response for this error
+                return StatusCode(403, new { message = ex.Message });
+            }
         }
 
         #endregion
@@ -33,10 +41,7 @@ namespace codersquare.Controllers
         public async Task<ActionResult<UserReadDto>> GetUserByUsername(string username)
         {
             UserReadDto user = await _userManager.GetUserByUsername(username);
-            if (user == null)
-            {
-                return NotFound($"User with username '{username}' not found.");
-            }
+           
             return Ok(user);
         }
 

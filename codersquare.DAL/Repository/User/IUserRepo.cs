@@ -2,7 +2,7 @@ namespace codersquare.DAL;
 
 public interface IUserRepo
 {
-    Task CreateUser(User user);
+    Task SignUp(User user);
     
     Task<User> GetUserById(Guid id);
     

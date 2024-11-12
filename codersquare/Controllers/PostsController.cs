@@ -34,7 +34,7 @@ namespace codersquare.Controllers
             //throw new Exception("Test exception to verify error handling middleware");
             
             List<PostReadDto> posts = await _postManager.GetAllPosts();
-            if (posts == null || posts.Count == 0) return NotFound("No posts found.");
+            if (posts.Count == 0) return NotFound("No posts found.");
 
             return Ok(posts);
         }
@@ -45,7 +45,7 @@ namespace codersquare.Controllers
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<PostReadDto>> GetPostById(Guid id)
         {
-            PostReadDto post = await _postManager.GetPostById(id);
+            PostReadDto? post = await _postManager.GetPostById(id);
             if(post == null) return NotFound();
             
             return Ok(post);

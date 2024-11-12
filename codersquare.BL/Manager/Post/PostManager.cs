@@ -58,7 +58,7 @@ public class PostManager : IPostManager
 
     public async Task<PostReadDto?> GetPostById(Guid id)
     {
-        Post post = await _postRepo.GetPostById(id);
+        Post? post = await _postRepo.GetPostById(id);
         if (post == null) return null;
 
         return new PostReadDto()
@@ -87,7 +87,7 @@ public class PostManager : IPostManager
 
     public async Task<bool> DeletePost(Guid postId)
     {
-        Post post = await _postRepo.GetPostById(postId);
+        Post? post = await _postRepo.GetPostById(postId);
         if(post == null) return false;
         _postRepo.DeletePost(post);
         await _postRepo.SaveChanges();

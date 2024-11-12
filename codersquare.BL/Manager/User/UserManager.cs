@@ -11,8 +11,16 @@ public class UserManager : IUserManager
         _userRepo = userRepo;
     }
 
-    public async Task CreateUser(UserCreateDto userToCreate)
+    public async Task SignUp(UserCreateDto userToCreate)
     {
+        bool usernameExists = await _userRepo.GetUserByUsername(userToCreate.Username) != null;
+        bool emailExists = await _userRepo.GetUserByEmail(userToCreate.Email) != null;
+        
+        if (usernameExists || emailExists)
+        {
+            throw new Exception("Username or email already exists.");
+        }
+        
         User user = new User
         {
             Id = Guid.NewGuid(),
@@ -23,14 +31,14 @@ public class UserManager : IUserManager
             Username = userToCreate.Username,
         };
         
-        await _userRepo.CreateUser(user);
+        await _userRepo.SignUp(user);
         await _userRepo.SaveChanges();
     }
 
     public async Task<bool> UpdateUser(UserUpdateDto userToUpdate, Guid userId)
     {
         User user = await _userRepo.GetUserById(userId);
-        if (user == null) return false;
+        
         user.FirstName = userToUpdate.FirstName;
         user.LastName = userToUpdate.LastName;
         user.Email = userToUpdate.Email;
@@ -44,7 +52,6 @@ public class UserManager : IUserManager
     public async Task<UserReadDto> GetUserById(Guid id)
     {
         User user = await _userRepo.GetUserById(id);
-        if (user == null) return null;
 
         return new UserReadDto
         {
