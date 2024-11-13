@@ -16,20 +16,40 @@ namespace codersquare.Controllers
         }
 
         #region LikePost
-        //TODO get post id from url
-        // POST /api//likes/{postId}
-        [HttpPost]
-        public async Task<ActionResult> LikePost([FromBody] LikeCreateDto likeCreateDto)
+        //TODO get user id
+        // POST /api/likes/{postId}
+        [HttpPost("{postId:guid}")]
+        public async Task<ActionResult> LikePost(Guid postId,[FromBody] LikeCreateDto likeCreateDto)
         {
-            await _likeManager.CreateLike(likeCreateDto);
+            await _likeManager.CreateLike(postId, likeCreateDto);
             return Ok("Like added successfully.");
         }
         #endregion
-        
-        //Todo
-        //List Likes GET /api/likes/{postId}
-        //Delete Likes DELETE /api/likes/{postId}
 
-        
+        #region CountLikes
+        //GET /api/likes/{oostId}
+        [HttpGet("{postId:guid}")]
+        public async Task<ActionResult<int>> GetLikesCount(Guid postId)
+        {
+            int likeCount = await _likeManager.GetLikesCount(postId);
+            return Ok(likeCount);
+        }
+        #endregion
+
+        #region DeleteLike
+        //Todo get userId
+        //DELETE api/likes/{postId}/{userId}
+        [HttpDelete("{postId:guid}/{userId:guid}")]
+        public async Task<ActionResult<int>> DeleteLike(Guid postId, Guid userId)
+        {
+            bool success = await _likeManager.DeleteLike(postId, userId);
+            if (success)
+            {
+                return Ok("Like deleted successfully.");
+            }
+            return NotFound("Like not found.");
+        }
+
+        #endregion
     }
 }

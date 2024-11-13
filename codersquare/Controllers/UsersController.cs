@@ -55,7 +55,7 @@ namespace codersquare.Controllers
         #endregion
         
         #region UpdateUser
-        //GET /api/users/{id}
+        //PATCH /api/users/{id}
         //Todo get current user
         [HttpPatch("users/{id:guid}")]
         public async Task<ActionResult> UpdateUser(UserUpdateDto user, Guid id)
@@ -66,9 +66,20 @@ namespace codersquare.Controllers
         }
 
         #endregion
+
+        #region GetUserById
+        //GET /api/users/{id}
+        [HttpGet("users/{id:guid}")]
+        public async Task<ActionResult<UserReadDto>> GetUserById(Guid id)
+        {
+            UserReadDto user = await _userManager.GetUserById(id);
+            if(user == null) return NotFound();
+            return Ok(user);
+        }
+
+        #endregion
         
         //TODO
-        //Get user GET /api/users/{id}
         //Get current user GET /api/users/
         
     }

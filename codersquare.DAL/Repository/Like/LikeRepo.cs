@@ -15,14 +15,23 @@ public class LikeRepo : ILikeRepo
         await _context.Likes.AddAsync(like);
     }
 
-    public void DeleteLike(Like like)
+    public async Task<bool> DeleteLike(Guid postId, Guid userId)
     {
-         _context.Likes.Remove(like);
+        var like = await _context.Likes.FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == userId);
+        
+        if (like == null)
+        {
+            Console.WriteLine($"Like not found: PostId={postId}, UserId={userId}");
+            return false;
+        }
+        
+        _context.Likes.Remove(like);
+        return true;
     }
 
-    public async Task<List<Like>> GetLikes(Guid postId)
+    public async Task<int> CountLikes(Guid postId)
     {
-        return await _context.Likes.Where(x => x.PostId == postId).ToListAsync();
+        return await _context.Likes.CountAsync(l => l.PostId == postId);
     }
 
     public async Task<int> SaveChanges()

@@ -11,40 +11,29 @@ public class LikeManager : ILikeManager
         _likeRepo = likeRepo;
     }
 
-    public async Task CreateLike(LikeCreateDto likeToCreate)
+    public async Task CreateLike(Guid postId,LikeCreateDto likeToCreate)
     {
         Like like = new Like
         {
             UserId = likeToCreate.UserId,
-            PostId = likeToCreate.PostId,
+            PostId = postId
         };
         
         await _likeRepo.CreateLike(like);
         await _likeRepo.SaveChanges(); 
     }
 
-    public async Task<bool> DeleteLike(Guid userId, Guid postId)
+    public async Task<bool> DeleteLike(Guid postId, Guid userId)
     {
-        List<Like> likes = await _likeRepo.GetLikes(postId);
-        
-        Like likeToDelete = likes.FirstOrDefault(l => l.UserId == userId);
-        
-        if(likeToDelete == null) return false;
-        _likeRepo.DeleteLike(likeToDelete);
+        bool likeDeleted = await _likeRepo.DeleteLike(postId, userId);
+        if (!likeDeleted) return false;
+
         await _likeRepo.SaveChanges();
         return true;
     }
 
-    public async Task<List<LikeReadDto>> GetLikes(Guid postId)
+    public async Task<int> GetLikesCount(Guid postId)
     {
-        List<Like> likes = await _likeRepo.GetLikes(postId);
-
-        List<LikeReadDto> likesReadDto = likes.Select(like => new LikeReadDto
-        {
-            UserId = like.UserId,
-            PostId = like.PostId
-        }).ToList();
-        
-        return likesReadDto;
+        return await _likeRepo.CountLikes(postId);
     }
 }

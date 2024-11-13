@@ -2,9 +2,9 @@ namespace codersquare.BL;
 
 public interface ILikeManager
 {
-    Task CreateLike(LikeCreateDto likeToCreate);
+    Task CreateLike(Guid postId,LikeCreateDto likeToCreate);
     
-    Task<bool> DeleteLike(Guid userId, Guid postId);
+    Task<bool> DeleteLike( Guid postId, Guid userId);
     
-    Task<List<LikeReadDto>> GetLikes(Guid postId);
+    Task<int> GetLikesCount(Guid postId);
 }
