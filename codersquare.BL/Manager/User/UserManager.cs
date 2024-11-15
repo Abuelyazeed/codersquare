@@ -59,9 +59,9 @@ public class UserManager : IUserManager
         };
     }
 
-    public async Task<bool> UpdateUser(UserUpdateDto userToUpdate, Guid userId)
+    public async Task<bool> UpdateUser(UserUpdateDto userToUpdate, string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var user = await _userManager.FindByIdAsync(userId);
         if (user == null) return false;
         
         user.FirstName = userToUpdate.FirstName;

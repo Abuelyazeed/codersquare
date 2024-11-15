@@ -12,12 +12,10 @@ namespace codersquare.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserManager _userManager;
-        private readonly ITokenManager _tokenManager;
 
         public UsersController(IUserManager userManager, ITokenManager tokenManager)
         {
             _userManager = userManager;
-            _tokenManager = tokenManager;
         }
 
         #region SignUp
@@ -79,7 +77,7 @@ namespace codersquare.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized("User ID not found in token.");
 
-            Guid userId = Guid.Parse(userIdClaim.Value);
+            string userId = userIdClaim.Value;
             
             bool isSuccess = await _userManager.UpdateUser(user, userId);
             if(!isSuccess) return NotFound(new { message = $"User with ID {userId} not found or update failed." });

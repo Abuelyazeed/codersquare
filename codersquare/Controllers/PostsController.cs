@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using codersquare.BL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,18 +19,51 @@ namespace codersquare.Controllers
         
         #region CreatePost
         //POST /api/posts
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> CreatePost([FromBody] PostCreateDto post)
         {
-            await _postManager.CreatePost(post);
+            // Get the current user's ID from the claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) 
+            {
+                return Unauthorized(new { message = "User ID not found in token. Please provide a valid token." });
+            }
+            
+            await _postManager.CreatePost(post, userIdClaim.Value);
             return Ok("Post created successfully.");
         }
+        #endregion
+        
+        #region DeletePost
+        //DELETE /api/posts/{id}
+        [Authorize]
+        [HttpDelete("{id:guid}")]
+        public async Task<ActionResult<bool>> DeletePost(Guid id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized(new { message = "User ID not found in token. Please provide a valid token." });
+            }
+
+            string userId = userIdClaim.Value;
+            
+            
+            bool isSuccess = await _postManager.DeletePost(id, userId);
+            if (!isSuccess) 
+            {
+                return NotFound(new { message = $"Post not found or you are not authorized to delete it." });
+            }
+            
+            return Ok("Post deleted successfully.");
+        }
+
         #endregion
 
         #region GetAllPosts
         //GET /api/posts
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<List<PostReadDto>>> GetAllPosts()
         {
             //throw new Exception("Test exception to verify error handling middleware");
@@ -53,18 +87,6 @@ namespace codersquare.Controllers
         }
 
         #endregion
-
-        #region DeletePost
-        //DELETE /api/posts/{id}
-        [HttpDelete("{id:guid}")]
-        public async Task<ActionResult<bool>> DeletePost(Guid id)
-        {
-            bool isSuccess = await _postManager.DeletePost(id);
-            if(!isSuccess) return NotFound($"Post with id {id} not found.");
-            
-            return Ok("Post deleted successfully.");
-        }
-
-        #endregion
+        
     }
 }

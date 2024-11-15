@@ -9,7 +9,7 @@ public class Post
     
     public string Url { get; set; }
     public DateTime PostedAt { get; set; }
-    public Guid UserId  { get; set; }
+    public string UserId  { get; set; }
     
     //Navigation Property
     public User User { get; set; }

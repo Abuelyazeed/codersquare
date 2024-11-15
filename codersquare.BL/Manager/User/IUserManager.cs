@@ -7,7 +7,7 @@ public interface IUserManager
     Task SignUp(SignUp toCreate);
     Task<NewUserDto> Login(LoginDto toLogin);
     
-    Task<bool> UpdateUser(UserUpdateDto userToUpdate, Guid userId);
+    Task<bool> UpdateUser(UserUpdateDto userToUpdate, string userId);
     
     Task<UserReadDto> GetUserById(string id);
     

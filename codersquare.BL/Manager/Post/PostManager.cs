@@ -40,7 +40,7 @@ public class PostManager : IPostManager
         return postDtos;
     }
 
-    public async Task CreatePost(PostCreateDto postToCreate)
+    public async Task CreatePost(PostCreateDto postToCreate, string userId)
     {
         Post post = new Post
         {
@@ -48,8 +48,7 @@ public class PostManager : IPostManager
             Title = postToCreate.Title,
             Url = postToCreate.Url,
             PostedAt = DateTime.Now,
-            UserId = postToCreate.UserId,
-            
+            UserId = userId
         };
         
         await _postRepo.CreatePost(post);
@@ -85,10 +84,17 @@ public class PostManager : IPostManager
 
     }
 
-    public async Task<bool> DeletePost(Guid postId)
+    public async Task<bool> DeletePost(Guid postId, string userId)
     {
+        
         Post? post = await _postRepo.GetPostById(postId);
         if(post == null) return false;
+        
+        // Check if the current user is the owner of the post
+        if (post.UserId != userId)
+        {
+            return false; // User is not authorized to delete the post
+        }
         _postRepo.DeletePost(post);
         await _postRepo.SaveChanges();
         return true;

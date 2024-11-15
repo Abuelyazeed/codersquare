@@ -9,7 +9,7 @@ public class PostReadDto
     public string Url { get; set; }
     public DateTime PostedAt { get; set; }
    
-    public Guid UserId { get; set; } 
+    public string UserId { get; set; } 
     public List<CommentReadDto> Comments { get; set; } = new List<CommentReadDto>();
     public List<LikeReadDto> Likes { get; set; } = new List<LikeReadDto>();
 }

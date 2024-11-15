@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using codersquare.DAL;
 
@@ -10,9 +11,11 @@ using codersquare.DAL;
 namespace codersquare.DAL.Migrations
 {
     [DbContext(typeof(CodersquareContext))]
-    partial class CodersquareContextModelSnapshot : ModelSnapshot
+    [Migration("20241115140601_Chnaged post userId to string")]
+    partial class ChnagedpostuserIdtostring
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
