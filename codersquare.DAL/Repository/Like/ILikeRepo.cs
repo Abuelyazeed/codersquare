@@ -4,7 +4,7 @@ public interface ILikeRepo
 {
     Task CreateLike(Like like);
     
-    Task<bool> DeleteLike(Guid postId, Guid userId);
+    Task<bool> DeleteLike(Guid postId, string userId);
     
     Task<int> CountLikes(Guid postId);
     

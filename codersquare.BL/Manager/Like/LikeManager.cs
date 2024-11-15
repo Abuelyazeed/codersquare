@@ -11,11 +11,11 @@ public class LikeManager : ILikeManager
         _likeRepo = likeRepo;
     }
 
-    public async Task CreateLike(Guid postId,LikeCreateDto likeToCreate)
+    public async Task CreateLike(Guid postId,string userId)
     {
         Like like = new Like
         {
-            UserId = likeToCreate.UserId,
+            UserId = userId,
             PostId = postId
         };
         
@@ -23,7 +23,7 @@ public class LikeManager : ILikeManager
         await _likeRepo.SaveChanges(); 
     }
 
-    public async Task<bool> DeleteLike(Guid postId, Guid userId)
+    public async Task<bool> DeleteLike(Guid postId, string userId)
     {
         bool likeDeleted = await _likeRepo.DeleteLike(postId, userId);
         if (!likeDeleted) return false;

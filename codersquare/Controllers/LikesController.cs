@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using codersquare.BL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,14 +18,37 @@ namespace codersquare.Controllers
         }
 
         #region LikePost
-        //TODO get user id
         // POST /api/likes/{postId}
+        [Authorize]
         [HttpPost("{postId:guid}")]
-        public async Task<ActionResult> LikePost(Guid postId,[FromBody] LikeCreateDto likeCreateDto)
+        public async Task<ActionResult> LikePost(Guid postId)
         {
-            await _likeManager.CreateLike(postId, likeCreateDto);
+            // Get the current user's ID from the claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            string userId = userIdClaim.Value;
+            
+            await _likeManager.CreateLike(postId, userId);
             return Ok("Like added successfully.");
         }
+        #endregion
+        
+        #region DeleteLike
+        //DELETE api/likes/{postId}/{userId}
+        [Authorize]
+        [HttpDelete("{postId:guid}")]
+        public async Task<ActionResult<int>> DeleteLike(Guid postId)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            string userId = userIdClaim.Value;
+            
+            bool success = await _likeManager.DeleteLike(postId, userId);
+            if (success)
+            {
+                return Ok("Like deleted successfully.");
+            }
+            return NotFound("Like not found.");
+        }
+
         #endregion
 
         #region CountLikes
@@ -35,21 +60,6 @@ namespace codersquare.Controllers
             return Ok(likeCount);
         }
         #endregion
-
-        #region DeleteLike
-        //Todo get userId
-        //DELETE api/likes/{postId}/{userId}
-        [HttpDelete("{postId:guid}/{userId:guid}")]
-        public async Task<ActionResult<int>> DeleteLike(Guid postId, Guid userId)
-        {
-            bool success = await _likeManager.DeleteLike(postId, userId);
-            if (success)
-            {
-                return Ok("Like deleted successfully.");
-            }
-            return NotFound("Like not found.");
-        }
-
-        #endregion
+        
     }
 }

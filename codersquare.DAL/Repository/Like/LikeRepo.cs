@@ -15,7 +15,7 @@ public class LikeRepo : ILikeRepo
         await _context.Likes.AddAsync(like);
     }
 
-    public async Task<bool> DeleteLike(Guid postId, Guid userId)
+    public async Task<bool> DeleteLike(Guid postId, string userId)
     {
         var like = await _context.Likes.FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == userId);
         
