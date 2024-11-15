@@ -32,7 +32,7 @@ public class UserManager : IUserManager
         if (!createdUser.Succeeded)
         {
             var errors = string.Join(", ", createdUser.Errors.Select(e => e.Description));
-            throw new Exception($"User creation failed: {errors}");
+            throw new ArgumentException($"User creation failed: {errors}");
         }
     }
 
@@ -41,17 +41,15 @@ public class UserManager : IUserManager
         // Try to find the user by username or email
         var user = await _userManager.FindByNameAsync(toLogin.EmailOrUsername)
                    ?? await _userManager.FindByEmailAsync(toLogin.EmailOrUsername);
-
-        // If user is still null, invalid credentials
-        if (user == null) throw new Exception("Invalid username/email or password.");
+        
+        // Return null if user is not found
+        if (user == null) return null;
 
         // Check password validity
         var signInResult = await _signInManager.CheckPasswordSignInAsync(user, toLogin.Password, false);
 
-        if (!signInResult.Succeeded)
-        {
-            throw new Exception("Invalid username/email or password.");
-        }
+        // Return null if password check fails
+        if (!signInResult.Succeeded) return null;
         
         return new NewUserDto
         {
