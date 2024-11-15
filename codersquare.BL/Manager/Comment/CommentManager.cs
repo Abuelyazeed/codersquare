@@ -11,7 +11,7 @@ public class CommentManager : ICommentManager
         _commentRepo = commentRepo;
     }
     
-    public async Task CreateComment(CommentCreateDto commentToCreate, Guid userId, Guid postId)
+    public async Task CreateComment(CommentCreateDto commentToCreate, string userId, Guid postId)
     {
         Comment comment = new Comment
         {

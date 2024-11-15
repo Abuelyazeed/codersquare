@@ -2,7 +2,7 @@ namespace codersquare.BL;
 
 public interface ICommentManager
 {
-    Task CreateComment(CommentCreateDto commentToCreate, Guid userId, Guid postId);
+    Task CreateComment(CommentCreateDto commentToCreate, string userId, Guid postId);
     
     Task<int> CountComment(Guid postId);
     

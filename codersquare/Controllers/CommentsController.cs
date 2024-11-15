@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using codersquare.BL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,13 +18,29 @@ namespace codersquare.Controllers
         }
         
         #region CreateComment
-        //TODO get current user
-        // POST /api/comments/{userId}/{postId}
-        [HttpPost("{userId:guid}/{postId:guid}")]
-        public async Task<ActionResult> CreateComment(Guid userId, Guid postId, [FromBody] CommentCreateDto commentDto)
+        // POST /api/comments/{postId}
+        [Authorize]
+        [HttpPost("{postId:guid}")]
+        public async Task<ActionResult> CreateComment(Guid postId, [FromBody] CommentCreateDto commentDto)
         {
+            // Get the current user's ID from the claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            string userId = userIdClaim.Value;
+            
+            
             await _commentManager.CreateComment(commentDto, userId, postId);
             return CreatedAtAction(nameof(GetComments), new { postId }, "Comment created successfully.");
+        }
+        #endregion
+        
+        #region DeleteComment
+        // DELETE /api/comments/{id}
+        [Authorize]
+        [HttpDelete("{id:guid}")]
+        public ActionResult DeleteComment(Guid id)
+        {
+            _commentManager.DeleteComment(id);
+            return Ok("Comment deleted successfully.");
         }
         #endregion
 
@@ -39,18 +57,17 @@ namespace codersquare.Controllers
             return Ok(comments);
         }
         #endregion
-        
-        #region DeleteComment
-        // DELETE /api/comments/{id}
-        [HttpDelete("{id:guid}")]
-        public ActionResult DeleteComment(Guid id)
+
+        #region CountComments
+        // GET /api/comments/{postId}/count
+        [HttpGet("{postId:guid}/count")]
+        public async Task<ActionResult<int>> CountComments(Guid postId)
         {
-            _commentManager.DeleteComment(id);
-            return Ok("Comment deleted successfully.");
+            // Get the comment count for the specific post
+            int commentCount = await _commentManager.CountComment(postId);
+            return Ok(new { count = commentCount });
         }
         #endregion
         
-        //TODO 
-        //count comments GET /api/comments/{postId}/count
     }
 }
