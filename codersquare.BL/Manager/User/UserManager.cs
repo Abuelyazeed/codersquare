@@ -1,116 +1,116 @@
 using codersquare.DAL;
+using Microsoft.AspNetCore.Identity;
 
 namespace codersquare.BL;
 
 public class UserManager : IUserManager
 {
-    private readonly IUserRepo _userRepo;
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly ITokenManager _tokenManager;
 
-    public UserManager(IUserRepo userRepo)
+    public UserManager(UserManager<User> userManager, SignInManager<User> signInManager, ITokenManager tokenManager)
     {
-        _userRepo = userRepo;
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _tokenManager = tokenManager;
     }
 
-    public async Task SignUp(UserCreateDto userToCreate)
+    public async Task SignUp(SignUp toCreate)
     {
-        bool usernameExists = await _userRepo.GetUserByUsername(userToCreate.Username) != null;
-        bool emailExists = await _userRepo.GetUserByEmail(userToCreate.Email) != null;
-        
-        if (usernameExists || emailExists)
-        {
-            throw new Exception("Username or email already exists.");
-        }
-        
         User user = new User
         {
-            Id = Guid.NewGuid(),
-            FirstName = userToCreate.FirstName,
-            LastName = userToCreate.LastName,
-            Email = userToCreate.Email,
-            Password = userToCreate.Password,
-            Username = userToCreate.Username,
+            UserName = toCreate.Username,
+            Email = toCreate.Email,
+            FirstName = toCreate.FirstName,
+            LastName = toCreate.LastName
         };
         
-        await _userRepo.SignUp(user);
-        await _userRepo.SaveChanges();
+        // Create the user with password hashing
+        var createdUser = await _userManager.CreateAsync(user, toCreate.Password);
+        
+        if (!createdUser.Succeeded)
+        {
+            var errors = string.Join(", ", createdUser.Errors.Select(e => e.Description));
+            throw new Exception($"User creation failed: {errors}");
+        }
     }
 
-    public async Task<UserReadDto> SignIn(UserSignInDto userToSignIn)
+    public async Task<NewUserDto> Login(LoginDto toLogin)
     {
         // Try to find the user by username or email
-        var user = await _userRepo.GetUserByUsername(userToSignIn.EmailOrUsername) 
-                   ?? await _userRepo.GetUserByEmail(userToSignIn.EmailOrUsername);
+        var user = await _userManager.FindByNameAsync(toLogin.EmailOrUsername)
+                   ?? await _userManager.FindByEmailAsync(toLogin.EmailOrUsername);
 
         // If user is still null, invalid credentials
-        if (user == null || user.Password != userToSignIn.Password)
+        if (user == null) throw new Exception("Invalid username/email or password.");
+
+        // Check password validity
+        var signInResult = await _signInManager.CheckPasswordSignInAsync(user, toLogin.Password, false);
+
+        if (!signInResult.Succeeded)
         {
             throw new Exception("Invalid username/email or password.");
         }
         
-        return new UserReadDto
+        return new NewUserDto
         {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Username = user.Username,
+            Username = user.UserName,
             Email = user.Email,
+            Token = _tokenManager.GenerateToken(user)
         };
     }
 
     public async Task<bool> UpdateUser(UserUpdateDto userToUpdate, Guid userId)
     {
-        User user = await _userRepo.GetUserById(userId);
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null) return false;
         
         user.FirstName = userToUpdate.FirstName;
         user.LastName = userToUpdate.LastName;
         user.Email = userToUpdate.Email;
-        user.Password = userToUpdate.Password;
-        user.Username = userToUpdate.Username;
+        user.UserName = userToUpdate.Username;
         
-        int numberOfAffectedRows = await _userRepo.SaveChanges();
-        return numberOfAffectedRows > 0;
+        var result = await _userManager.UpdateAsync(user);
+        return result.Succeeded;
     }
 
-    public async Task<UserReadDto> GetUserById(Guid id)
+    public async Task<UserReadDto> GetUserById(string id)
     {
-        User user = await _userRepo.GetUserById(id);
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
+            return null;
 
+        // Map the User to UserReadDto
         return new UserReadDto
         {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Username = user.Username,
+            Username = user.UserName,
             Email = user.Email,
         };
     }
 
-    public async Task<UserReadDto> GetUserByEmail(string email)
+    public async Task<NewUserDto> GetUserByEmail(string email)
     {
-        User user = await _userRepo.GetUserByEmail(email);
-        if (user == null) return null;
-
-        return new UserReadDto
+        var user = await _userManager.FindByEmailAsync(email);
+        return user == null ? null : new NewUserDto
         {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Username = user.Username,
+            // Id = user.Id,
+            // FirstName = user.FirstName,
+            // LastName = user.LastName,
+            Username = user.UserName,
             Email = user.Email,
         };
     }
 
-    public async Task<UserReadDto> GetUserByUsername(string userName)
+    public async Task<NewUserDto> GetUserByUsername(string userName)
     {
-        User user = await _userRepo.GetUserByUsername(userName);
-        if (user == null) return null;
-
-        return new UserReadDto
+        var user = await _userManager.FindByNameAsync(userName);
+        return user == null ? null : new NewUserDto
         {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Username = user.Username,
+            // Id = user.Id,
+            // FirstName = user.FirstName,
+            // LastName = user.LastName,
+            Username = user.UserName,
             Email = user.Email,
         };
     }

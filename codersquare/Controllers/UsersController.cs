@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using codersquare.BL;
 using codersquare.DAL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,16 +12,18 @@ namespace codersquare.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserManager _userManager;
+        private readonly ITokenManager _tokenManager;
 
-        public UsersController(IUserManager userManager)
+        public UsersController(IUserManager userManager, ITokenManager tokenManager)
         {
             _userManager = userManager;
+            _tokenManager = tokenManager;
         }
 
         #region SignUp
         //POST /api/signup
         [HttpPost("signup")]
-        public async Task<ActionResult> SignUp([FromBody] UserCreateDto user)
+        public async Task<ActionResult> SignUp([FromBody] SignUp user)
         {
             try
             {
@@ -28,40 +32,49 @@ namespace codersquare.Controllers
             }
             catch (Exception ex)
             {
-                // Return a 403 Forbidden response for this error
-                return StatusCode(403, new { message = ex.Message });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
         #endregion
 
         #region SignIn
-        //POST /api/user/signin
-        [HttpPost("signin")]
-        public async Task<ActionResult> Sign([FromBody] UserSignInDto userSignInDto)
+        //POST /api/user/login
+        [HttpPost("login")]
+        public async Task<ActionResult> Login([FromBody] LoginDto loginDto)
         {
             try
             {
-                await _userManager.SignIn(userSignInDto); 
-                return Ok("Signed in successfully.");
+                 // Sign in and get the UserReadDto object
+                 var newUserDto = await _userManager.Login(loginDto);
+        
+                 if (newUserDto == null)
+                     return Unauthorized("Invalid username/email or password.");
+        
+                 return Ok(new { message = "Signed in successfully.",  newUserDto});
             }
             catch (Exception ex)
             {
-                // Return a 403 Forbidden response for this error
-                return StatusCode(403, new { message = ex.Message });
+                 return StatusCode(500, new { message = ex.Message });
             }
         }
 
         #endregion
         
         #region UpdateUser
-        //PATCH /api/users/{id}
-        //Todo get current user
-        [HttpPatch("users/{id:guid}")]
-        public async Task<ActionResult> UpdateUser(UserUpdateDto user, Guid id)
+        //PATCH /api/users
+        [Authorize]
+        [HttpPatch("users")]
+        public async Task<ActionResult> UpdateUser(UserUpdateDto user)
         {
-            bool isSuccess = await _userManager.UpdateUser(user, id);
-            if(!isSuccess) return NotFound($"User with id {id} not found.");
+            // Get the current user's ID from the claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized("User ID not found in token.");
+
+            Guid userId = Guid.Parse(userIdClaim.Value);
+            
+            bool isSuccess = await _userManager.UpdateUser(user, userId);
+            if(!isSuccess) return NotFound($"User with id {userId} not found.");
             return Ok("User updated successfully.");
         }
 
@@ -69,8 +82,9 @@ namespace codersquare.Controllers
 
         #region GetUserById
         //GET /api/users/{id}
-        [HttpGet("users/{id:guid}")]
-        public async Task<ActionResult<UserReadDto>> GetUserById(Guid id)
+        [Authorize]
+        [HttpGet("users/{id}")]
+        public async Task<ActionResult<UserReadDto>> GetUserById(string id)
         {
             UserReadDto user = await _userManager.GetUserById(id);
             if(user == null) return NotFound();
@@ -79,8 +93,22 @@ namespace codersquare.Controllers
 
         #endregion
         
-        //TODO
-        //Get current user GET /api/users/
+        #region GetCurrentUser
+        // GET /api/users/
+        [Authorize]
+        [HttpGet("users/me")]
+        public async Task<ActionResult<NewUserDto>> GetCurrentUser()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            
+            string userId = userIdClaim.Value;
+
+            UserReadDto newUser = await _userManager.GetUserById(userId);
+            if (newUser == null) return NotFound();
+            return Ok(newUser);
+        }
+        #endregion
         
     }
 }

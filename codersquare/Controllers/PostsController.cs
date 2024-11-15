@@ -1,4 +1,5 @@
 using codersquare.BL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,7 @@ namespace codersquare.Controllers
         #region GetAllPosts
         //GET /api/posts
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<List<PostReadDto>>> GetAllPosts()
         {
             //throw new Exception("Test exception to verify error handling middleware");

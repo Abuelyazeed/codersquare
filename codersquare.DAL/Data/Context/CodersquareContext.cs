@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace codersquare.DAL;
 
-public class CodersquareContext : DbContext
+public class CodersquareContext : IdentityDbContext<User>
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<Post> Posts => Set<Post>();

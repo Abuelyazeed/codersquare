@@ -2,11 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace codersquare.BL;
 
-public class UserSignInDto
+public class LoginDto
 {
     [Required(ErrorMessage = "Email or Username is required.")]
     public string EmailOrUsername { get; set; }
     
     [Required(ErrorMessage = "Password is required.")]
-    public String Password { get; set; }
+    public string Password { get; set; }
 }

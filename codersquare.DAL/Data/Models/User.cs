@@ -1,12 +1,9 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace codersquare.DAL;
 
-public class User
+public class User : IdentityUser
 {
-    public Guid Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public String Password { get; set; }
-    public string Email { get; set; }
-    
-    public string Username { get; set; }
 }
