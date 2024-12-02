@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Box } from '@chakra-ui/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import SignUp from './Components/SignUp';
 import ListPosts from './Pages/ListPosts';
 import ViewPost from './Pages/ViewPost';
 import NavBar from './Components/NavBar';
+import SignUp from './Pages/SIGNup';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -31,6 +31,7 @@ function App() {
       <Box mt={20}>
         <Routes>
           <Route path="/" element={<ListPosts />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/p/:id" element={<ViewPost />} />
         </Routes>
       </Box>

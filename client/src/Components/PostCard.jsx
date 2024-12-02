@@ -1,6 +1,12 @@
 import { Box, Flex, Text, Stack, Button, Badge } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 function PostCard({ post }) {
+  const navigate = useNavigate();
+
+  const handleReadMore = () => {
+    navigate(`/p/${post.id}`);
+  };
   return (
     <Box
       w="100%" // Full width of the container
@@ -44,7 +50,7 @@ function PostCard({ post }) {
 
         {/* Action Buttons */}
         <Flex justify="space-between">
-          <Button size="sm" colorScheme="blue">
+          <Button size="sm" colorScheme="blue" onClick={handleReadMore}>
             Read More
           </Button>
           <Button size="sm" colorScheme="red">
