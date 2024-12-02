@@ -5,6 +5,8 @@ import ListPosts from './Pages/ListPosts';
 import ViewPost from './Pages/ViewPost';
 import NavBar from './Components/NavBar';
 import SignUp from './Pages/SIGNup';
+import Login from './Pages/Login';
+import CreatePost from './Pages/CreatePost';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -32,6 +34,8 @@ function App() {
         <Routes>
           <Route path="/" element={<ListPosts />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/p/create" element={<CreatePost />} />
           <Route path="/p/:id" element={<ViewPost />} />
         </Routes>
       </Box>

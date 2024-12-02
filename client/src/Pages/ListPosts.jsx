@@ -4,6 +4,7 @@ import PostCard from '../Components/PostCard';
 
 function ListPosts() {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -19,6 +20,8 @@ function ListPosts() {
       } catch (error) {
         console.error('Error fetching posts:', error);
         setError('Failed to fetch posts. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -46,7 +49,7 @@ function ListPosts() {
       )}
 
       {/* Loading State */}
-      {!error && posts.length === 0 && (
+      {!error && loading && (
         <Text color="gray.400" mb={4}>
           Loading posts...
         </Text>
@@ -60,7 +63,7 @@ function ListPosts() {
           ))}
         </Stack>
       ) : (
-        !error && <Text color="gray.500">No posts available.</Text>
+        !error && !loading && <Text color="gray.500">No posts available.</Text>
       )}
     </Box>
   );

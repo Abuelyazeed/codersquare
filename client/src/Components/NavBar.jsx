@@ -1,6 +1,29 @@
 import { Box, Flex, Button, Text } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function NavBar() {
+  const navigate = useNavigate();
+
+  const handleSignUp = () => {
+    navigate('/signup');
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
+  const handleCreatePost = () => {
+    navigate('/create');
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem('authToken');
+    navigate('/login');
+  };
+
+  const isLoggedIn = localStorage.getItem('authToken') ? true : false;
+
   return (
     <Flex
       justify="space-between"
@@ -17,16 +40,31 @@ function NavBar() {
       zIndex={1000}
     >
       <Box fontSize="xl" fontWeight="bold" color="white">
-        Codersquare
+        <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
+          Codersquare
+        </Link>
       </Box>
 
       <Flex gap={4}>
-        <Button variant="outline" size="sm">
-          Sign Up
-        </Button>
-        <Button variant="solid" size="sm">
-          Sign In
-        </Button>
+        {!isLoggedIn ? (
+          <>
+            <Button variant="outline" size="sm" onClick={handleSignUp}>
+              Sign Up
+            </Button>
+            <Button variant="solid" size="sm" onClick={handleLogin}>
+              Login
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant="outline" size="sm" onClick={handleCreatePost}>
+              Create Post
+            </Button>
+            <Button variant="solid" size="sm" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </>
+        )}
       </Flex>
     </Flex>
   );

@@ -1,29 +1,75 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Text, Button, Stack, Badge, Flex } from '@chakra-ui/react';
+import { jwtDecode } from 'jwt-decode';
 
 function ViewPost() {
   const { id } = useParams();
-  console.log(id);
+
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
+  const [isLiked, setIsLiked] = useState(false);
+
+  // Extract userId from the JWT token stored in localStorage
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        return decoded.nameid; // Assuming the token contains userId
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const currentUserId = getUserIdFromToken();
+
+  const handleLike = async () => {
+    if (!currentUserId) {
+      alert('You must be logged in to like a post');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5220/api/likes/${id}`, {
+        method: isLiked ? 'DELETE' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Send token if needed
+        },
+        body: JSON.stringify({ userId: currentUserId, postId: id }),
+      });
+      if (response.ok) {
+        setIsLiked(!isLiked);
+        fetchPost();
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
+  };
+
+  const fetchPost = async () => {
+    try {
+      const response = await fetch(`http://localhost:5220/api/posts/${id}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setPost(data);
+
+      const liked = data.likes.some((like) => like.userId === currentUserId);
+      setIsLiked(liked);
+    } catch (error) {
+      console.error('Error fetching post:', error);
+      setError('Failed to fetch post');
+    }
+  };
 
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const response = await fetch(`http://localhost:5220/api/posts/${id}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setPost(data);
-      } catch (error) {
-        console.error('Error fetching post:', error);
-        setError('Failed to fetch post');
-      }
-    };
-
     fetchPost();
   }, [id]);
 
@@ -107,8 +153,8 @@ function ViewPost() {
       {/* Action Button */}
       <Flex justify="space-between" mt={4}>
         <Box>
-          <Button size="sm" colorScheme="blue" mr={2}>
-            Like
+          <Button size="sm" colorScheme="blue" mr={2} onClick={handleLike}>
+            {isLiked ? 'Unlike' : 'Like'}
           </Button>
           <Button size="sm" colorScheme="blue">
             Comment

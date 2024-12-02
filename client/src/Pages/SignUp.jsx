@@ -7,6 +7,7 @@ function SignUp() {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm();
   const [message, setMessage] = useState('');
 
@@ -27,10 +28,14 @@ function SignUp() {
         const result = await response.json();
         if (result.errors) {
           // If there are validation errors from the server
-          const errorMessages = {};
-          for (const [key, value] of Object.entries(result.errors)) {
-            errorMessages[key] = value.join(' '); // Combine multiple error messages for a field
-          }
+          Object.keys(result.errors).forEach((field) => {
+            // Assuming the error message is in an array
+            setError(field, {
+              type: 'manual',
+              message: result.errors[field][0], // Use the first error message
+            });
+          });
+          console.log(result.errors);
           setMessage('There are validation errors. Please check your inputs.');
         } else {
           setMessage(result.message || 'An error occurred during sign-up.');
@@ -48,41 +53,41 @@ function SignUp() {
       <form onSubmit={handleSubmit(onSubmit)} className="signup-form">
         {/* First Name */}
         <div className="form-group">
-          <label htmlFor="firstName">First Name</label>
+          <label htmlFor="FirstName">First Name</label>
           <input
-            id="firstName"
-            name="firstName"
+            id="FirstName"
+            name="FirstName"
             placeholder="First Name"
-            {...register('firstName', { required: 'First name is required' })}
+            {...register('FirstName', { required: 'First name is required' })}
           />
-          {errors.firstName && (
-            <span className="error-message">{errors.firstName.message}</span>
+          {errors.FirstName && (
+            <span className="error-message">{errors.FirstName.message}</span>
           )}
         </div>
 
         {/* Last Name */}
         <div className="form-group">
-          <label htmlFor="lastName">Last Name</label>
+          <label htmlFor="LastName">Last Name</label>
           <input
-            id="lastName"
-            name="lastName"
+            id="LastName"
+            name="LastName"
             placeholder="Last Name"
-            {...register('lastName', { required: 'Last name is required' })}
+            {...register('LastName', { required: 'Last name is required' })}
           />
-          {errors.lastName && (
-            <span className="error-message">{errors.lastName.message}</span>
+          {errors.LastName && (
+            <span className="error-message">{errors.LastName.message}</span>
           )}
         </div>
 
         {/* Email */}
         <div className="form-group">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="Email">Email</label>
           <input
-            id="email"
-            type="email"
-            name="email"
+            id="Email"
+            type="Email"
+            name="Email"
             placeholder="Email"
-            {...register('email', {
+            {...register('Email', {
               required: 'Email is required',
               pattern: {
                 value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
@@ -90,37 +95,37 @@ function SignUp() {
               },
             })}
           />
-          {errors.email && (
-            <span className="error-message">{errors.email.message}</span>
+          {errors.Email && (
+            <span className="error-message">{errors.Email.message}</span>
           )}
         </div>
 
         {/* Username */}
         <div className="form-group">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="Username">Username</label>
           <input
-            id="username"
-            name="username"
+            id="Username"
+            name="Username"
             placeholder="Username"
-            {...register('username', { required: 'Username is required' })}
+            {...register('Username', { required: 'Username is required' })}
           />
-          {errors.username && (
-            <span className="error-message">{errors.username.message}</span>
+          {errors.Username && (
+            <span className="error-message">{errors.Username.message}</span>
           )}
         </div>
 
         {/* Password */}
         <div className="form-group">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="Password">Password</label>
           <input
-            id="password"
-            type="password"
-            name="password"
+            id="Password"
+            type="Password"
+            name="Password"
             placeholder="Password"
-            {...register('password', { required: 'Password is required' })}
+            {...register('Password', { required: 'Password is required' })}
           />
-          {errors.password && (
-            <span className="error-message">{errors.password.message}</span>
+          {errors.Password && (
+            <span className="error-message">{errors.Password.message}</span>
           )}
         </div>
 
