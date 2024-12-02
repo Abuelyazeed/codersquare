@@ -9,6 +9,7 @@ function ViewPost() {
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
+  const [comment, setComment] = useState('');
 
   // Extract userId from the JWT token stored in localStorage
   const getUserIdFromToken = () => {
@@ -27,6 +28,7 @@ function ViewPost() {
 
   const currentUserId = getUserIdFromToken();
 
+  //LIKE
   const handleLike = async () => {
     if (!currentUserId) {
       alert('You must be logged in to like a post');
@@ -40,7 +42,6 @@ function ViewPost() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Send token if needed
         },
-        body: JSON.stringify({ userId: currentUserId, postId: id }),
       });
       if (response.ok) {
         setIsLiked(!isLiked);
@@ -48,6 +49,40 @@ function ViewPost() {
       }
     } catch (error) {
       console.error('Error liking post:', error);
+    }
+  };
+
+  //Comment
+  const handleComment = async () => {
+    if (!currentUserId) {
+      alert('You must be logged in to comment on a post');
+      return;
+    }
+
+    if (!comment.trim()) {
+      alert('Comment cannot be empty');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5220/api/comments/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        body: JSON.stringify({
+          content: comment,
+        }),
+      });
+      if (response.ok) {
+        setComment('');
+        fetchPost();
+      } else {
+        console.error('Failed to add comment:', response.status);
+      }
+    } catch (error) {
+      console.error('Error commenting on post:', error);
     }
   };
 
@@ -152,14 +187,30 @@ function ViewPost() {
 
       {/* Action Button */}
       <Flex justify="space-between" mt={4}>
-        <Box>
-          <Button size="sm" colorScheme="blue" mr={2} onClick={handleLike}>
-            {isLiked ? 'Unlike' : 'Like'}
-          </Button>
-          <Button size="sm" colorScheme="blue">
-            Comment
-          </Button>
-        </Box>
+        <Flex align="center">
+          <Box mr={2}>
+            <Button size="sm" colorScheme="blue" onClick={handleLike}>
+              {isLiked ? 'Unlike' : 'Like'}
+            </Button>
+          </Box>
+          <Flex align="center">
+            <Button size="sm" colorScheme="blue" onClick={handleComment}>
+              Comment
+            </Button>
+            <input
+              type="text"
+              placeholder="Write a comment..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              style={{
+                padding: '6px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                marginLeft: '8px',
+              }}
+            />
+          </Flex>
+        </Flex>
         <Button size="sm" colorScheme="red">
           Share
         </Button>
