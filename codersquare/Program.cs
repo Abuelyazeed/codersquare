@@ -114,6 +114,15 @@ builder.Services.AddAuthentication(options =>
 
 #endregion
 
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 
 
 var app = builder.Build();
@@ -131,6 +140,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseCors("AllowReactApp");
 
 app.MapControllers();
 
