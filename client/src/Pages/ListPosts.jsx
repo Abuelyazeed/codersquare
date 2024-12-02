@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Box, Text, Button, Stack } from '@chakra-ui/react';
+import PostCard from '../Components/PostCard';
 
 function ListPosts() {
   const [posts, setPosts] = useState([]);
@@ -30,43 +32,38 @@ function ListPosts() {
   };
 
   return (
-    <div>
-      <h1>All Posts</h1>
+    <Box w="100%" minH="100vh" px={6}>
+      {/* Error Message */}
       {error && (
-        <div>
-          <p style={{ color: 'red' }}>{error}</p>
-          <button onClick={handleRetry}>Retry</button> {/* Retry button */}
-        </div>
+        <Box bg="red.700" p={4} borderRadius="md" mb={4}>
+          <Text color="white" mb={2}>
+            {error}
+          </Text>
+          <Button onClick={handleRetry} colorScheme="blue" size="sm">
+            Retry
+          </Button>
+        </Box>
       )}
-      {!error && posts.length === 0 && <p>Loading posts...</p>}
+
+      {/* Loading State */}
+      {!error && posts.length === 0 && (
+        <Text color="gray.400" mb={4}>
+          Loading posts...
+        </Text>
+      )}
+
+      {/* Posts Display */}
       {!error && posts.length > 0 ? (
-        <ul>
+        <Stack spacing={4}>
           {posts.map((post) => (
-            <li key={post.id}>
-              <h2>{post.title}</h2>
-              <p>
-                <a href={post.url} target="_blank" rel="noopener noreferrer">
-                  {post.url}
-                </a>
-              </p>
-              <p>
-                <strong>Posted At:</strong>
-                {new Date(post.postedAt).toLocaleString()}
-              </p>
-              <p>
-                <strong>Comments:</strong>
-                {post.comments.length}
-              </p>
-              <p>
-                <strong>Likes:</strong> {post.likes.length}
-              </p>
-            </li>
+            <PostCard key={post.id} post={post} />
           ))}
-        </ul>
+        </Stack>
       ) : (
-        !error && <p>No posts available.</p>
+        !error && <Text color="gray.500">No posts available.</Text>
       )}
-    </div>
+    </Box>
   );
 }
+
 export default ListPosts;
